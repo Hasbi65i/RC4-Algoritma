@@ -12,7 +12,7 @@ body{
   justify-content:center;
 }
 .container{
-  width:400px;
+  width:420px;
   background:white;
   padding:20px;
   margin-top:40px;
@@ -32,7 +32,7 @@ h2{
 label{
   font-weight:bold;
   display:block;
-  margin-top:15px;
+  margin-top:12px;
 }
 input{
   width:100%;
@@ -40,12 +40,10 @@ input{
   margin-top:5px;
   border:1px solid #2b7a78;
   border-radius:6px;
-  box-sizing:border-box;
-  outline:none;
 }
 button{
   width:100%;
-  margin-top:20px;
+  margin-top:15px;
   padding:10px;
   background:#2b7a78;
   color:white;
@@ -57,9 +55,11 @@ button{
 pre{
   background:#f4f4f4;
   padding:10px;
-  margin-top:15px;
+  margin-top:12px;
   border-radius:6px;
-  font-size:13px;
+  font-size:12px;
+  max-height:220px;
+  overflow-y:auto;
 }
 </style>
 </head>
@@ -85,6 +85,8 @@ pre{
 
   <button onclick="jalankanRC4()">Jalankan RC4</button>
 
+  <pre id="ksa"></pre>
+  <pre id="prga"></pre>
   <pre id="output"></pre>
 </div>
 
@@ -99,24 +101,35 @@ function jalankanRC4(){
   let K=document.getElementById("key").value.split(',').map(Number);
   let plaintext=hurufKeAngka(document.getElementById("plaintext").value);
 
+  let logKSA="=== KSA (Key Scheduling Algorithm) ===\n";
   let j=0;
+
   for(let i=0;i<n;i++){
     j=(j+S[i]+K[i%K.length])%n;
+    logKSA+=`i=${i}, j=${j} → swap(S[${i}], S[${j}])\n`;
     [S[i],S[j]]=[S[j],S[i]];
+    logKSA+=`S = [${S.join(", ")}]\n\n`;
   }
 
+  let logPRGA="=== PRGA ===\n";
   let i=0; 
   j=0;
   let keystream=[];
+
   for(let t=0;t<plaintext.length;t++){
     i=(i+1)%n;
     j=(j+S[i])%n;
     [S[i],S[j]]=[S[j],S[i]];
-    keystream.push(S[(S[i]+S[j])%n]);
+    let k=S[(S[i]+S[j])%n];
+    keystream.push(k);
+
+    logPRGA+=`Iterasi ${t+1}: i=${i}, j=${j}, K=${k}\n`;
   }
 
   let cipher=plaintext.map((p,idx)=>p^keystream[idx]);
 
+  document.getElementById("ksa").innerText=logKSA;
+  document.getElementById("prga").innerText=logPRGA;
   document.getElementById("output").innerText=
     "Keystream  : "+keystream.join(", ")+
     "\nCiphertext : "+cipher.join(", ");
