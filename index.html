@@ -38,15 +38,10 @@ input{
   width:100%;
   padding:8px;
   margin-top:5px;
-  border:1px solid #2b7a78 !important;
+  border:1px solid #2b7a78;
   border-radius:6px;
   box-sizing:border-box;
-  outline:none !important;
-}
-input:focus,
-input:invalid{
-  border:1px solid #2b7a78 !important;
-  box-shadow:none !important;
+  outline:none;
 }
 button{
   width:100%;
@@ -110,7 +105,8 @@ function jalankanRC4(){
     [S[i],S[j]]=[S[j],S[i]];
   }
 
-  let i=0; j=0;
+  let i=0; 
+  j=0;
   let keystream=[];
   for(let t=0;t<plaintext.length;t++){
     i=(i+1)%n;
