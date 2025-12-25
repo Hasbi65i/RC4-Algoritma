@@ -1,60 +1,86 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Visualisasi Algoritma RC4</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #eaf6f4;
-      display: flex;
-      justify-content: center;
-    }
-    .container {
-      width: 400px;
-      background: white;
-      padding: 20px;
-      margin-top: 40px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,.1);
-    }
-    h2 {
-      text-align: center;
-      color: #2b7a78;
-    }
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 15px;
-    }
-    input, textarea, button {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-    }
-    button {
-      margin-top: 20px;
-      background: #2b7a78;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    pre {
-      background: #f4f4f4;
-      padding: 10px;
-      margin-top: 15px;
-      border-radius: 6px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Visualisasi Algoritma RC4</title>
+
+<style>
+body{
+  font-family:Arial,sans-serif;
+  background:#eaf6f4;
+  display:flex;
+  justify-content:center;
+}
+.container{
+  width:400px;
+  background:white;
+  padding:20px;
+  margin-top:40px;
+  border-radius:12px;
+  box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+h2{
+  text-align:center;
+  color:#2b7a78;
+  margin-bottom:5px;
+}
+.identity{
+  text-align:center;
+  font-size:14px;
+  margin-bottom:15px;
+}
+label{
+  font-weight:bold;
+  display:block;
+  margin-top:15px;
+}
+input{
+  width:100%;
+  padding:8px;
+  margin-top:5px;
+  border:1px solid #2b7a78 !important;
+  border-radius:6px;
+  box-sizing:border-box;
+  outline:none !important;
+}
+input:focus,
+input:invalid{
+  border:1px solid #2b7a78 !important;
+  box-shadow:none !important;
+}
+button{
+  width:100%;
+  margin-top:20px;
+  padding:10px;
+  background:#2b7a78;
+  color:white;
+  border:none;
+  border-radius:6px;
+  font-weight:bold;
+  cursor:pointer;
+}
+pre{
+  background:#f4f4f4;
+  padding:10px;
+  margin-top:15px;
+  border-radius:6px;
+  font-size:13px;
+}
+</style>
 </head>
+
 <body>
 
 <div class="container">
   <h2>Visualisasi Algoritma RC4</h2>
 
+  <div class="identity">
+    <b>Nama:</b> Hasbi Mustafa<br>
+    <b>NPM:</b> 23120050
+  </div>
+
   <label>Panjang Array S</label>
-  <input type="number" id="n" value="8">
+  <input type="text" id="n" value="8">
 
   <label>Array K (pisahkan koma)</label>
   <input type="text" id="key" value="2,1,3,0">
@@ -68,40 +94,36 @@
 </div>
 
 <script>
-function hurufKeAngka(teks) {
-  return teks.toUpperCase().split('').map(c => c.charCodeAt(0) - 65);
+function hurufKeAngka(teks){
+  return teks.toUpperCase().split('').map(c=>c.charCodeAt(0)-65);
 }
 
-function jalankanRC4() {
-  const n = parseInt(document.getElementById("n").value);
-  let S = [...Array(n).keys()];
-  let K = document.getElementById("key").value.split(',').map(Number);
-  let plaintext = hurufKeAngka(document.getElementById("plaintext").value);
+function jalankanRC4(){
+  const n=parseInt(document.getElementById("n").value);
+  let S=[...Array(n).keys()];
+  let K=document.getElementById("key").value.split(',').map(Number);
+  let plaintext=hurufKeAngka(document.getElementById("plaintext").value);
 
-  let j = 0;
-  // KSA
-  for (let i = 0; i < n; i++) {
-    j = (j + S[i] + K[i % K.length]) % n;
-    [S[i], S[j]] = [S[j], S[i]];
+  let j=0;
+  for(let i=0;i<n;i++){
+    j=(j+S[i]+K[i%K.length])%n;
+    [S[i],S[j]]=[S[j],S[i]];
   }
 
-  // PRGA
-  let i = 0; j = 0;
-  let keystream = [];
-  for (let t = 0; t < plaintext.length; t++) {
-    i = (i + 1) % n;
-    j = (j + S[i]) % n;
-    [S[i], S[j]] = [S[j], S[i]];
-    let k = S[(S[i] + S[j]) % n];
-    keystream.push(k);
+  let i=0; j=0;
+  let keystream=[];
+  for(let t=0;t<plaintext.length;t++){
+    i=(i+1)%n;
+    j=(j+S[i])%n;
+    [S[i],S[j]]=[S[j],S[i]];
+    keystream.push(S[(S[i]+S[j])%n]);
   }
 
-  // Enkripsi
-  let cipher = plaintext.map((p, idx) => p ^ keystream[idx]);
+  let cipher=plaintext.map((p,idx)=>p^keystream[idx]);
 
-  document.getElementById("output").innerText =
-    "Keystream : " + keystream.join(", ") +
-    "\nCiphertext: " + cipher.join(", ");
+  document.getElementById("output").innerText=
+    "Keystream  : "+keystream.join(", ")+
+    "\nCiphertext : "+cipher.join(", ");
 }
 </script>
 
