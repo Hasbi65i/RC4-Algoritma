@@ -1,3 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Visualisasi Algoritma RC4</title>
+
+<style>
+body{
+  font-family:Arial, sans-serif;
+  background:#eaf6f4;
+  display:flex;
+  justify-content:center;
+}
+.container{
+  width:500px;
+  background:white;
+  padding:20px;
+  margin-top:40px;
+  border-radius:12px;
+  box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+h2{
+  text-align:center;
+  color:#2b7a78;
+}
+label{
+  font-weight:bold;
+  display:block;
+  margin-top:15px;
+}
+input{
+  width:100%;
+  padding:8px;
+  margin-top:5px;
+  border-radius:6px;
+  border:1px solid #2b7a78;
+}
+button{
+  width:100%;
+  margin-top:20px;
+  padding:10px;
+  background:#2b7a78;
+  color:white;
+  border:none;
+  border-radius:6px;
+  font-weight:bold;
+  cursor:pointer;
+}
+pre{
+  background:#f4f4f4;
+  padding:10px;
+  margin-top:15px;
+  border-radius:6px;
+  font-size:13px;
+  white-space:pre-wrap;
+}
+.identity{
+  text-align:center;
+  font-size:14px;
+  margin-bottom:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Visualisasi Algoritma RC4</h2>
+
+  <div class="identity">
+    <b>Nama:</b> Hasbi Mustafa<br>
+    <b>NPM:</b> 23120050
+  </div>
+
+  <label>Panjang Array S</label>
+  <input type="number" id="n" value="4">
+
+  <label>Array K (pisahkan koma)</label>
+  <input type="text" id="key" value="4,2,3,1">
+
+  <label>Plaintext</label>
+  <input type="text" id="plaintext" value="HALO">
+
+  <button onclick="jalankanRC4()">Jalankan RC4</button>
+
+  <pre id="output"></pre>
+</div>
+
 <script>
 function hurufKeAngka(teks){
   return teks.toUpperCase().split('').map(c => c.charCodeAt(0) - 65);
@@ -27,7 +115,6 @@ function jalankanRC4(){
   out += "Array S = [" + S.join(", ") + "]\n";
   out += "Array K = [" + K.join(", ") + "]\n\n";
 
-  // ================= KSA =================
   out += "================ KSA (Key Scheduling) ================\n\n";
 
   let j = 0;
@@ -45,43 +132,35 @@ function jalankanRC4(){
     out += "Hasil Array S = [ " + S.join(" ") + " ]\n\n";
   }
 
-  // ================= PRGA =================
   out += "===================================================\n";
   out += "                     PRGA\n";
   out += "===================================================\n\n";
 
   let i = 0;
   j = 0;
-  out += "Inisialisasi\n";
-  out += "i = 0\nj = 0\n\n";
+  out += "Inisialisasi\ni = 0\nj = 0\n\n";
 
   let keystream = [];
 
   for(let t=0;t<plaintext.length;t++){
     out += "Iterasi " + (t+1) + "\n";
-
     i = (i + 1) % n;
-    out += "i = ("+(i-1+n)%n+" + 1) mod "+n+" = "+i+"\n";
-
     j = (j + S[i]) % n;
-    out += "j = ("+(j-S[i]+n)%n+" + S["+i+"]) mod "+n+" = "+j+"\n";
 
+    out += "i = " + i + "\n";
+    out += "j = " + j + "\n";
     out += "swap(S["+i+"], S["+j+"])\n";
-    [S[i], S[j]] = [S[j], S[i]];
 
+    [S[i], S[j]] = [S[j], S[i]];
     out += "Array S = [ " + S.join(" ") + " ]\n";
 
     let k = S[(S[i] + S[j]) % n];
     keystream.push(k);
 
-    out += "K"+(t+1)+" = S[(S["+i+"] + S["+j+"]) mod "+n+"] = "+k+"\n";
-    out += "K"+(t+1)+" = " + k.toString(2).padStart(8,"0") + "\n\n";
+    out += "K"+(t+1)+" = " + k + "\n\n";
   }
 
-  // ================= ENKRIPSI =================
-  out += "===================================================\n";
-  out += "                     ENKRIPSI\n";
-  out += "===================================================\n\n";
+  out += "================ ENKRIPSI =================\n\n";
 
   let cipher = [];
   for(let x=0;x<plaintext.length;x++){
@@ -90,10 +169,12 @@ function jalankanRC4(){
     out += plaintext[x]+" XOR "+keystream[x]+" = "+c+"\n";
   }
 
-  out += "\n================ HASIL AKHIR =================\n\n";
-  out += "Keystream = ["+keystream.join(", ")+"]\n";
+  out += "\nKeystream = ["+keystream.join(", ")+"]\n";
   out += "Ciphertext = ["+cipher.join(", ")+"]\n";
 
   document.getElementById("output").innerText = out;
 }
 </script>
+
+</body>
+</html>
